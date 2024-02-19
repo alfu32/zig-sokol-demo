@@ -1,0 +1,15 @@
+.{
+    .name = "zig-sokol-demo",
+    .version = "0.1.0",
+    .paths = .{
+        "src",
+        "build.zig",
+        "build.zig.zon",
+    },
+    .dependencies = .{
+        //// .sokol = .{
+        ////     .url = "https://github.com/floooh/sokol-zig.git#e0df69dc8ca17053bfa48ecec46dde02acb4395b",
+        ////     // .hash = "e0df69dc8ca17053bfa48ecec46dde02acb4395b",
+        //// },
+    },
+}

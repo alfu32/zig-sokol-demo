@@ -1,24 +1,28 @@
 const std = @import("std");
+const vec = @import("vector.zig");
 
-pub fn main() !void {
-    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
+pub fn main() void {
+    // Example usage
+    const Vec3_f32 = vec.vector_3(f32);
+    var vec1 = Vec3_f32.init(1.2, 2.05, 3.0);
+    const vec2 = Vec3_f32.init(4.0, 5.0, 6.0);
 
-    // stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+    const added = vec1.add(vec2);
+    const multiplied = vec1.mul(2.0);
+    const cross = vec1.cross_product(vec2);
+    const length_squared = vec1.len2();
+    const length = vec1.len();
+    const rotated = vec1.rot2(0.5); // Assuming 0.5 radians rotation angle
+    const dot_product = vec1.dot(vec2); // Assuming 0.5 radians rotation angle
 
-    try stdout.print("Run `zig build test` to run the tests.\n", .{});
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
 
-    try bw.flush(); // don't forget to flush!
+    const allocator = arena.allocator();
+
+    const fmt_str = "added:{!s},\nmultiplied:{!s},\ncross:{!s},\nlength_squared:{d},\nlength:{d},\nrotated:{!s},\ndot_product:{d}\n";
+    const fmt_data = .{ added.str(allocator), multiplied.str(allocator), cross.str(allocator), length_squared, length, rotated.str(allocator), dot_product };
+    // Output or further operations with results
+    std.debug.print(fmt_str, fmt_data);
 }
 
-test "simple test" {
-    var list = std.ArrayList(i32).init(std.testing.allocator);
-    defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
-    try list.append(42);
-    try std.testing.expectEqual(@as(i32, 42), list.pop());
-}
