@@ -1,5 +1,5 @@
 const std = @import("std");
-const vec = @import("vector.zig");
+const vec = @import("g3_vector.zig");
 
 pub fn main() void {
     // Example usage
@@ -7,7 +7,7 @@ pub fn main() void {
     var vec1 = Vec3_f32.init(1.2, 2.05, 3.0);
     const vec2 = Vec3_f32.init(4.0, 5.0, 6.0);
 
-    const added = vec1.add(vec2);
+    const added = vec1.add(vec2); // tati este bun!!!:)
     const multiplied = vec1.mul(2.0);
     const cross = vec1.cross_product(vec2);
     const length_squared = vec1.len2();
@@ -25,4 +25,3 @@ pub fn main() void {
     // Output or further operations with results
     std.debug.print(fmt_str, fmt_data);
 }
-
