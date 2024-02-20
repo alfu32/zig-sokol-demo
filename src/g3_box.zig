@@ -40,19 +40,19 @@ pub fn box_3(comptime T: type) type { //, comptime precision: u8
         }
 
         // Method to compute the corners of the box
-        // pub fn corners(self: Self) [8]vec.vector_3(T) {
-        //     const corner0 = self.corner();
-        //     return [8]vec.vector_3(T){
-        //         vec.vector_3(T).init( self.anchor.x, self.anchor.y, self.anchor.z ),
-        //         vec.vector_3(T).init( self.anchor.x, self.anchor.y, corner.z ),
-        //         vec.vector_3(T).init( self.anchor.x, corner.y,      self.anchor.z ),
-        //         vec.vector_3(T).init( self.anchor.x, corner.y,      corner.z ),
-        //         vec.vector_3(T).init( corner.x,      self.anchor.y, self.anchor.z ),
-        //         vec.vector_3(T).init( corner.x,      self.anchor.y, corner.z ),
-        //         vec.vector_3(T).init( corner.x,      corner.y,      self.anchor.z ),
-        //         corner0,
-        //     };
-        // }
+        pub fn corners(self: Self) [8]vec.vector_3(T) {
+            const cn = self.corner();
+            return [8]vec.vector_3(T){
+                vec.vector_3(T).init( self.anchor.x, self.anchor.y, self.anchor.z ),
+                vec.vector_3(T).init( self.anchor.x, self.anchor.y, cn.z ),
+                vec.vector_3(T).init( self.anchor.x, cn.y,          self.anchor.z ),
+                vec.vector_3(T).init( self.anchor.x, cn.y,          cn.z ),
+                vec.vector_3(T).init( cn.x,          self.anchor.y, self.anchor.z ),
+                vec.vector_3(T).init( cn.x,          self.anchor.y, cn.z ),
+                vec.vector_3(T).init( cn.x,          cn.y,          self.anchor.z ),
+                cn,
+            };
+        }
 
         // Method to convert the box to a string
         pub fn str(self: Self, allocator: Allocator) ![]u8  {
@@ -116,23 +116,29 @@ test "test corner" {
     // try expect(try box1.corner().str(allocator) == try expectedCorner.str(allocator));
 }
 
-// test "test corners" {
-//     const box1 = box_3(f64).init(vec.vector_3(f64){ .x = 0.0, .y = 0.0, .z = 0.0 }, vec.vector_3(f64){ .x = 2.0, .y = 2.0, .z = 2.0 });
-//     const expectedCorners = [_]vec.vector_3(f64){
-//         .{ .x = 0.0, .y = 0.0, .z = 0.0 },
-//         .{ .x = 0.0, .y = 0.0, .z = 2.0 },
-//         .{ .x = 0.0, .y = 2.0, .z = 0.0 },
-//         .{ .x = 0.0, .y = 2.0, .z = 2.0 },
-//         .{ .x = 2.0, .y = 0.0, .z = 0.0 },
-//         .{ .x = 2.0, .y = 0.0, .z = 2.0 },
-//         .{ .x = 2.0, .y = 2.0, .z = 0.0 },
-//         .{ .x = 2.0, .y = 2.0, .z = 2.0 },
-//     };
-//     std.debug.print("\nexpected Corners {}",.{expectedCorners});
-//     std.debug.print("\nactual corners {}",.{box1,box1.corners()});
-//     std.debug.print("\n", .{});
-//     // expect(box1.corners() == expectedCorners);
-// }
+test "test corners" {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
+
+    const box1 = box_3(f64).init(vec.vector_3(f64){ .x = 0.0, .y = 0.0, .z = 0.0 }, vec.vector_3(f64){ .x = 2.0, .y = 2.0, .z = 2.0 });
+    const expectedCorners = [8]vec.vector_3(f64){
+        vec.vector_3(f64){ .x = 0.0, .y = 0.0, .z = 0.0 },
+        vec.vector_3(f64){ .x = 0.0, .y = 0.0, .z = 2.0 },
+        vec.vector_3(f64){ .x = 0.0, .y = 2.0, .z = 0.0 },
+        vec.vector_3(f64){ .x = 0.0, .y = 2.0, .z = 2.0 },
+        vec.vector_3(f64){ .x = 2.0, .y = 0.0, .z = 0.0 },
+        vec.vector_3(f64){ .x = 2.0, .y = 0.0, .z = 2.0 },
+        vec.vector_3(f64){ .x = 2.0, .y = 2.0, .z = 0.0 },
+        vec.vector_3(f64){ .x = 2.0, .y = 2.0, .z = 2.0 },
+    };
+    std.debug.print("\nbox {!s}",.{box1.str(allocator)});
+    std.debug.print("\nexpected Corners {s}",.{expectedCorners});
+    std.debug.print("\nactual corners {!s}",.{box1.corners()});
+    std.debug.print("\n", .{});
+    // expect(box1.corners() == expectedCorners);
+}
 
 test "test to_string" {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
